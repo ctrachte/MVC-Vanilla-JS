@@ -1,3 +1,5 @@
+// This tutorial is from https://www.taniarascia.com/javascript-mvc-todo-app/
+
 
 // The model will ONLY store and manipulate data, nothing else:
 class Model {
@@ -37,6 +39,8 @@ class Model {
     // Filter a todo out of the array by id
     deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id)
+
+      this.onTodoListChanged(this.todos)
     }
 
     //   and toggle switches the complete boolean property.
@@ -45,6 +49,9 @@ class Model {
       this.todos = this.todos.map(todo =>
         todo.id === id ? { id: todo.id, text: todo.text, complete: !todo.complete } : todo
       )
+    }
+    bindTodoListChanged(callback) {
+      this.onTodoListChanged = callback
     }
 }
 
@@ -152,10 +159,70 @@ class View {
   }
 }
 
+// The controller will handle events after they're fired. When you submit a new todo,
+ // or click the delete button, or click on the checkbox of a todo, an event will be fired.
+ //  The view must listen for those events because they're user input of the view,
+ // but it will dispatch the responsibility of what will happen in response to the event to the controller.
 class Controller {
   constructor(model, view) {
     this.model = model
     this.view = view
+    this.view.bindAddTodo(this.handleAddTodo)
+    this.view.bindDeleteTodo(this.handleDeleteTodo)
+    this.view.bindToggleTodo(this.handleToggleTodo)
+    this.model.bindTodoListChanged(this.onTodoListChanged)
+
+    // Display initial todos if any
+    this.onTodoListChanged(this.model.todos)
+  }
+
+  onTodoListChanged = todos => {
+    this.view.displayTodos(todos)
+  }
+  handleAddTodo = todoText => {
+    this.model.addTodo(todoText)
+  }
+
+  handleEditTodo = (id, todoText) => {
+    this.model.editTodo(id, todoText)
+  }
+
+  handleDeleteTodo = id => {
+    this.model.deleteTodo(id)
+  }
+
+  handleToggleTodo = id => {
+    this.model.toggleTodo(id)
+  }
+  bindAddTodo(handler) {
+    this.form.addEventListener('submit', event => {
+      event.preventDefault()
+
+      if (this._todoText) {
+        handler(this._todoText)
+        this._resetInput()
+      }
+    })
+  }
+
+  bindDeleteTodo(handler) {
+    this.todoList.addEventListener('click', event => {
+      if (event.target.className === 'delete') {
+        const id = parseInt(event.target.parentElement.id)
+
+        handler(id)
+      }
+    })
+  }
+
+  bindToggleTodo(handler) {
+    this.todoList.addEventListener('change', event => {
+      if (event.target.type === 'checkbox') {
+        const id = parseInt(event.target.parentElement.id)
+
+        handler(id)
+      }
+    })
   }
 }
 
