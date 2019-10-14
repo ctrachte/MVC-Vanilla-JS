@@ -12,7 +12,7 @@ class Model {
       this.onTodoListChanged(todos)
       localStorage.setItem('todos', JSON.stringify(todos))
     }
-    
+
     //add appends a new todo to the array,
     addTodo(todoText) {
       const todo = {
@@ -21,7 +21,7 @@ class Model {
         complete: false,
       }
 
-      this.todos.push(todo)
+      this._commit(this.todos)
     }
 
     // edit finds the id of the todo to edit and replaces it,
@@ -30,13 +30,15 @@ class Model {
       this.todos = this.todos.map(todo =>
         todo.id === id ? { id: todo.id, text: updatedText, complete: todo.complete } : todo
       )
+      this._commit(this.todos)
     }
 
     // Filter a todo out of the array by id
     deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id)
 
-      this.onTodoListChanged(this.todos)
+      this._commit(this.todos)
+
     }
 
     //   and toggle switches the complete boolean property.
