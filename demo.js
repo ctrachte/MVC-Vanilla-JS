@@ -1,3 +1,5 @@
+// This tutorial is from https://www.taniarascia.com/javascript-mvc-todo-app/
+
 
 // The model will ONLY store and manipulate data, nothing else:
 class Model {
@@ -152,17 +154,36 @@ class View {
   }
 }
 
+// The controller will handle events after they're fired. When you submit a new todo,
+ // or click the delete button, or click on the checkbox of a todo, an event will be fired.
+ //  The view must listen for those events because they're user input of the view,
+ // but it will dispatch the responsibility of what will happen in response to the event to the controller.
 class Controller {
   constructor(model, view) {
     this.model = model
     this.view = view
 
-    // Display initial todos
+    // Display initial todos if any
     this.onTodoListChanged(this.model.todos)
   }
 
   onTodoListChanged = todos => {
     this.view.displayTodos(todos)
+  }
+  handleAddTodo = todoText => {
+    this.model.addTodo(todoText)
+  }
+
+  handleEditTodo = (id, todoText) => {
+    this.model.editTodo(id, todoText)
+  }
+
+  handleDeleteTodo = id => {
+    this.model.deleteTodo(id)
+  }
+
+  handleToggleTodo = id => {
+    this.model.toggleTodo(id)
   }
 }
 
