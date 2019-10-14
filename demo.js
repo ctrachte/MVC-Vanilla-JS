@@ -39,6 +39,8 @@ class Model {
     // Filter a todo out of the array by id
     deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id)
+
+      this.onTodoListChanged(this.todos)
     }
 
     //   and toggle switches the complete boolean property.
@@ -47,6 +49,9 @@ class Model {
       this.todos = this.todos.map(todo =>
         todo.id === id ? { id: todo.id, text: todo.text, complete: !todo.complete } : todo
       )
+    }
+    bindTodoListChanged(callback) {
+      this.onTodoListChanged = callback
     }
 }
 
@@ -165,6 +170,8 @@ class Controller {
     this.view.bindAddTodo(this.handleAddTodo)
     this.view.bindDeleteTodo(this.handleDeleteTodo)
     this.view.bindToggleTodo(this.handleToggleTodo)
+    this.model.bindTodoListChanged(this.onTodoListChanged)
+
     // Display initial todos if any
     this.onTodoListChanged(this.model.todos)
   }
