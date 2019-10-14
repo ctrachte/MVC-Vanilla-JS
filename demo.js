@@ -4,20 +4,16 @@
 // The model will ONLY store and manipulate data, nothing else:
 class Model {
   constructor() {
-      // The state of the model, an array of todo objects, prepopulated with some data
-      this.todos = [
-        { id: 1,
-          text: 'Run a marathon',
-          complete: false
-         },
-        { id: 2,
-          text: 'Plant a garden',
-          complete: false
-         },
-      ]
+      // The state of the model, using local storage
+      this.todos = JSON.parse(localStorage.getItem('todos')) || []
     }
+    //private method to update the value of localStorage as well as the model state.
+    _commit(todos) {
+      this.onTodoListChanged(todos)
+      localStorage.setItem('todos', JSON.stringify(todos))
+    }
+    
     //add appends a new todo to the array,
-
     addTodo(todoText) {
       const todo = {
         id: this.todos.length > 0 ? this.todos[this.todos.length - 1].id + 1 : 1,
