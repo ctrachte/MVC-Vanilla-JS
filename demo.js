@@ -59,4 +59,9 @@ class Controller {
   }
 }
 
-const app = new Controller(new Model(), new View())
+const app = new Controller(new Model(), new View());
+
+
+// add a new todo to test:
+app.model.addTodo('Grocery Shopping')
+console.log(app.model.todos)
