@@ -83,7 +83,31 @@ class View {
 
       // Append the title, form, and todo list to the app
       this.app.append(this.title, this.form, this.todoList)
+
+      this._temporaryTodoText
+      this._initLocalListeners()
   }
+
+  // Update temporary state
+  _initLocalListeners() {
+    this.todoList.addEventListener('input', event => {
+      if (event.target.className === 'editable') {
+        this._temporaryTodoText = event.target.innerText
+      }
+    })
+  }
+
+  // Send the completed value to the model
+  bindEditTodo(handler) {
+    this.todoList.addEventListener('focusout', event => {
+      if (this._temporaryTodoText) {
+        const id = parseInt(event.target.parentElement.id)
+
+        handler(id, this._temporaryTodoText)
+        this._temporaryTodoText = ''
+      }
+    })
+
   // below are PRIVATE helpers to be used only inside this class
   get _todoText() {
     return this.input.value
@@ -169,6 +193,7 @@ class Controller {
     this.view.bindDeleteTodo(this.handleDeleteTodo)
     this.view.bindToggleTodo(this.handleToggleTodo)
     this.model.bindTodoListChanged(this.onTodoListChanged)
+    this.view.bindEditTodo(this.handleEditTodo)
 
     // Display initial todos if any
     this.onTodoListChanged(this.model.todos)
