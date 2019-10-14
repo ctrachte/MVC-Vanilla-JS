@@ -162,7 +162,9 @@ class Controller {
   constructor(model, view) {
     this.model = model
     this.view = view
-
+    this.view.bindAddTodo(this.handleAddTodo)
+    this.view.bindDeleteTodo(this.handleDeleteTodo)
+    this.view.bindToggleTodo(this.handleToggleTodo)
     // Display initial todos if any
     this.onTodoListChanged(this.model.todos)
   }
