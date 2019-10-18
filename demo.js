@@ -19,7 +19,7 @@ class Model {
         text: todoText,
         complete: false,
       }
-      // console.log(this.todos);
+      this.todos.push(todo)
       this._commit(this.todos)
     }
 
@@ -56,31 +56,24 @@ class View {
   constructor() {
       // The root element
       this.app = this.getElement('#root')
-
       // The title of the app
       this.title = this.createElement('h1')
       this.title.textContent = 'Todos'
-
       // The form, with a [type="text"] input, and a submit button
       this.form = this.createElement('form')
-
       this.input = this.createElement('input')
       this.input.type = 'text'
       this.input.placeholder = 'Add todo'
       this.input.name = 'todo'
-
+      // submit button
       this.submitButton = this.createElement('button')
       this.submitButton.textContent = 'Submit'
-
       // The visual representation of the todo list
       this.todoList = this.createElement('ul', 'todo-list')
-
       // Append the input and submit button to the form
       this.form.append(this.input, this.submitButton)
-
       // Append the title, form, and todo list to the app
       this.app.append(this.title, this.form, this.todoList)
-
       this._temporaryTodoText
       this._initLocalListeners()
   }
@@ -105,6 +98,7 @@ class View {
       }
     });
   }
+
   bindAddTodo(handler) {
     this.form.addEventListener('submit', event => {
       event.preventDefault()
@@ -120,7 +114,6 @@ class View {
     this.todoList.addEventListener('click', event => {
       if (event.target.className === 'delete') {
         const id = parseInt(event.target.parentElement.id)
-
         handler(id)
       }
     })
@@ -130,7 +123,6 @@ class View {
     this.todoList.addEventListener('change', event => {
       if (event.target.type === 'checkbox') {
         const id = parseInt(event.target.parentElement.id)
-
         handler(id)
       }
     })
@@ -147,16 +139,15 @@ class View {
   createElement(tag, className) {
     const element = document.createElement(tag)
     if (className) element.classList.add(className)
-
     return element
   }
 
   // Retrieve an element from the DOM
   getElement(selector) {
     const element = document.querySelector(selector)
-
     return element
   }
+
   // The displayTodos method will create the ul and lis that the todo list consists of, and display them.
   // Every time a todo is changed, added, or removes, the displayTodos method will be called again with the todos from the model,
   //  resetting the list and redisplaying them. This will keep the view in sync with the model state.
@@ -175,17 +166,14 @@ class View {
         todos.forEach(todo => {
           const li = this.createElement('li')
           li.id = todo.id
-
           // Each todo item will have a checkbox you can toggle
           const checkbox = this.createElement('input')
           checkbox.type = 'checkbox'
           checkbox.checked = todo.complete
-
           // The todo item text will be in a contenteditable span
           const span = this.createElement('span')
           span.contentEditable = true
           span.classList.add('editable')
-
           // If the todo is complete, it will have a strikethrough
           if (todo.complete) {
             const strike = this.createElement('s')
@@ -195,12 +183,10 @@ class View {
             // Otherwise just display the text
             span.textContent = todo.text
           }
-
           // The todos will also have a delete button
           const deleteButton = this.createElement('button', 'delete')
           deleteButton.textContent = 'Delete'
           li.append(checkbox, span, deleteButton)
-
           // Append nodes to the todo list
           this.todoList.append(li)
         })
@@ -221,7 +207,6 @@ class Controller {
     this.view.bindToggleTodo(this.handleToggleTodo)
     this.model.bindTodoListChanged(this.onTodoListChanged)
     this.view.bindEditTodo(this.handleEditTodo)
-
     // Display initial todos if any
     this.onTodoListChanged(this.model.todos)
   }
@@ -248,7 +233,6 @@ class Controller {
 }
 
 const app = new Controller(new Model(), new View());
-
 
 // add a new todo to test:
 app.model.addTodo('Grocery Shopping')
