@@ -1,6 +1,5 @@
 // This tutorial is from https://www.taniarascia.com/javascript-mvc-todo-app/
 
-
 // The model will ONLY store and manipulate data, nothing else:
 class Model {
   constructor() {
@@ -20,7 +19,7 @@ class Model {
         text: todoText,
         complete: false,
       }
-
+      // console.log(this.todos);
       this._commit(this.todos)
     }
 
@@ -36,9 +35,7 @@ class Model {
     // Filter a todo out of the array by id
     deleteTodo(id) {
       this.todos = this.todos.filter(todo => todo.id !== id)
-
       this._commit(this.todos)
-
     }
 
     //   and toggle switches the complete boolean property.
@@ -106,8 +103,38 @@ class View {
         handler(id, this._temporaryTodoText)
         this._temporaryTodoText = ''
       }
-    })
+    });
+  }
+  bindAddTodo(handler) {
+    this.form.addEventListener('submit', event => {
+      event.preventDefault()
 
+      if (this._todoText) {
+        handler(this._todoText)
+        this._resetInput()
+      }
+    })
+  }
+
+  bindDeleteTodo(handler) {
+    this.todoList.addEventListener('click', event => {
+      if (event.target.className === 'delete') {
+        const id = parseInt(event.target.parentElement.id)
+
+        handler(id)
+      }
+    })
+  }
+
+  bindToggleTodo(handler) {
+    this.todoList.addEventListener('change', event => {
+      if (event.target.type === 'checkbox') {
+        const id = parseInt(event.target.parentElement.id)
+
+        handler(id)
+      }
+    })
+  }
   // below are PRIVATE helpers to be used only inside this class
   get _todoText() {
     return this.input.value
@@ -217,36 +244,7 @@ class Controller {
   handleToggleTodo = id => {
     this.model.toggleTodo(id)
   }
-  bindAddTodo(handler) {
-    this.form.addEventListener('submit', event => {
-      event.preventDefault()
 
-      if (this._todoText) {
-        handler(this._todoText)
-        this._resetInput()
-      }
-    })
-  }
-
-  bindDeleteTodo(handler) {
-    this.todoList.addEventListener('click', event => {
-      if (event.target.className === 'delete') {
-        const id = parseInt(event.target.parentElement.id)
-
-        handler(id)
-      }
-    })
-  }
-
-  bindToggleTodo(handler) {
-    this.todoList.addEventListener('change', event => {
-      if (event.target.type === 'checkbox') {
-        const id = parseInt(event.target.parentElement.id)
-
-        handler(id)
-      }
-    })
-  }
 }
 
 const app = new Controller(new Model(), new View());
@@ -254,4 +252,4 @@ const app = new Controller(new Model(), new View());
 
 // add a new todo to test:
 app.model.addTodo('Grocery Shopping')
-console.log(app.model.todos)
+// console.log('intit array of todos:',app.model.todos)
