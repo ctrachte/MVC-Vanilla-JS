@@ -44,6 +44,7 @@ class Model {
       this.todos = this.todos.map(todo =>
         todo.id === id ? { id: todo.id, text: todo.text, complete: !todo.complete } : todo
       )
+
     }
     bindTodoListChanged(callback) {
       this.onTodoListChanged = callback
@@ -170,6 +171,7 @@ class View {
           const checkbox = this.createElement('input')
           checkbox.type = 'checkbox'
           checkbox.checked = todo.complete
+          checkbox.className = 'checkmark'
           // The todo item text will be in a contenteditable span
           const span = this.createElement('span')
           span.contentEditable = true
@@ -177,11 +179,11 @@ class View {
           // If the todo is complete, it will have a strikethrough
           if (todo.complete) {
             const strike = this.createElement('s')
-            strike.textContent = todo.text
+            strike.textContent = !todo.text ? "No Text ..." : todo.text
             span.append(strike)
           } else {
             // Otherwise just display the text
-            span.textContent = todo.text
+            span.textContent = !todo.text ? "No Text ..." : todo.text
           }
           // The todos will also have a delete button
           const deleteButton = this.createElement('button', 'delete')
@@ -235,5 +237,5 @@ class Controller {
 const app = new Controller(new Model(), new View());
 
 // add a new todo to test:
-app.model.addTodo('Grocery Shopping')
+// app.model.addTodo('Grocery Shopping')
 // console.log('intit array of todos:',app.model.todos)
